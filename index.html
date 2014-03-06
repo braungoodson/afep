@@ -1,0 +1,35 @@
+<!doctype html>
+<html data-ng-app="afep">
+  <body>
+    <div id="container">
+        <h1>Courses - By Title</h1>
+        Search: <input type="text" data-ng-model="search.title"/>
+        <div data-ng-controller="afepController">
+          <table data-ng-repeat="c in courses | filter:search:strict | orderBy:'title'">
+            <tr>
+              <td>{{c.name}} - {{c.title}}</td>
+            </tr>
+            <tr>
+              <td>{{c.description}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+      <script>
+        function Course (cid,c) {
+          this.cid = cid;
+          this.title = c.course_title;
+          this.description = c.course_desc;
+          this.name = c.course_name;
+        }
+        var afep = angular.module('afep',[]);
+      </script>
+      <script src="./courses.js"></script>
+      <script>
+        afep.controller('afepController',function($scope,coursesFactory){
+          $scope.courses = coursesFactory.getCourses();
+        });
+      </script>
+    </body>
+  </html>
