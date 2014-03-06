@@ -2,34 +2,46 @@
 <html data-ng-app="afep">
   <body>
     <div id="container">
-        <h1>Courses - By Title</h1>
-        Search: <input type="text" data-ng-model="search.title"/>
-        <div data-ng-controller="afepController">
-          <table data-ng-repeat="c in courses | filter:search:strict | orderBy:'title'">
-            <tr>
-              <td>{{c.name}} - {{c.title}}</td>
-            </tr>
-            <tr>
-              <td>{{c.description}}</td>
-            </tr>
-          </table>
-        </div>
+      <h1>Courses - By Title</h1>
+      Search: <input type="text" data-ng-model="search.title"/>
+      <div data-ng-controller="afepController">
+        <ul>
+          <li data-ng-repeat="c in courses | filter:search:strict | orderBy:'title'">
+            <table>
+              <tr>
+                <td>{{c.name}} - {{c.title}}</td>
+              </tr>
+              <tr>
+                <td>{{c.description}}</td>
+              </tr>
+            </table>
+          </li>
+        </ul>
       </div>
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
-      <script>
-        function Course (cid,c) {
-          this.cid = cid;
-          this.title = c.course_title;
-          this.description = c.course_desc;
-          this.name = c.course_name;
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+    <script>
+      var afep = angular.module('afep',[]);
+      function Term (tid,t) {
+        this.tid = tid;
+        this.term = t;
+      }
+      function Course (cid,c) {
+        this.cid = cid;
+        this.title = c.course_title;
+        this.description = c.course_desc;
+        this.name = c.course_name;
+        this.terms = [];
+        for (t in c.terms) {
+          this.terms.push(new Term(t,c.terms[t]));
         }
-        var afep = angular.module('afep',[]);
-      </script>
-      <script src="./courses.js"></script>
-      <script>
-        afep.controller('afepController',function($scope,coursesFactory){
-          $scope.courses = coursesFactory.getCourses();
-        });
-      </script>
-    </body>
-  </html>
+      }
+    </script>
+    <script src="./courses.js"></script>
+    <script>
+      afep.controller('afepController',function($scope,coursesFactory){
+        $scope.courses = coursesFactory.getCourses();
+      });
+    </script>
+  </body>
+</html>
