@@ -2,12 +2,24 @@
 <html data-ng-app="afep">
   <head>
     <style>
+      body {
+        background-color:#eee;
+      }
       .container {
         margin-top:25px;
       }
+      .meet {
+        width:100%;
+        border-collapse:collapse;
+      }
       .meet, .meet tr td {
-        border: 1px solid black;
         padding: 2.5px;
+      }
+      .meet tr td {
+        border-bottom:1px solid black;
+      }
+      .meet tr:first-child {
+        font-style:italic;
       }
     </style>
   <head>
@@ -95,7 +107,7 @@
       <div ng-controller="CourseController">
         <h3>{{course.title}}</h3>
         <div class="container">{{course.class}}</div>
-        <div class="container">Instructors: {{instructors}} </span></div>
+        <div class="container">In {{term}} instructed by {{instructors}}.</span></div>
         <table class="container meet">
           <tr>
             <td>Building</td>
@@ -123,9 +135,15 @@
         for (m in t.meet_times) {
           this.meet_times.push(new MeetTime(tid,t.meet_times[m]));
         }
+        if (!t.meet_times.length) {
+          this.meet_times.push(new MeetTime(tid,{building:null,room:null,weekDay:null,time:null}));
+        }
         this.instructors = '';
         for (i in t.instructors) {
           this.instructors += t.instructors[i] + ', '; //.push(new Instructor(t.instructors[i]));
+        }
+        if (!t.instructors.length) {
+          this.instructors += 'unknown, ';
         }
         if (this.instructors.length > 2) {
           this.instructors = this.instructors.substr(0,this.instructors.length-2);
@@ -136,10 +154,10 @@
       }
       function MeetTime (tid,m) {
         this.tid = tid;
-        this.building = m.building || 'N/A';
-        this.room = m.room || 'N/A';
-        this.weekDay = m.weekDay || 'N/A';
-        this.time = m.startTime && m.endTime ? m.startTime + ' - ' + m.endTime : 'N/A';
+        this.building = m.building || 'unknown';
+        this.room = m.room || 'unknown';
+        this.weekDay = m.weekDay || 'unknown';
+        this.time = m.startTime && m.endTime ? m.startTime + ' - ' + m.endTime : 'unknown';
       }
       function Course (cid,c) {
         this.cid = cid;
@@ -194,7 +212,16 @@
         $scope.course = new Course($routeParams.cid,c);
         var t = $scope.course.getTermById($routeParams.tid);
         $scope.instructors = t.instructors;
-        $scope.meets = t.meet_times;
+        $scope.meets = t.meet_times;        
+        var t = '';
+        var tid = $routeParams.tid;
+        if (tid.search(/spring/g)) {
+          t += 'Spring';
+        } else if (tid.search(/fall/g)) {
+          t += 'Fall';
+        }
+        t += ' ' + tid[0] + tid[1] + tid[2] + tid[3];
+        $scope.term = t;
       });
     </script>
   </body>
