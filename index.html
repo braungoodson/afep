@@ -1,8 +1,23 @@
 <!doctype html>
 <html data-ng-app="afep">
+  <head>
+    <style>
+      .container {
+        margin-top:25px;
+      }
+    </style>
+  <head>
   <body>
-    <div id="container">
-      <h1>Courses</h1>
+    <h1>Advanced Front-End Problem</h1>
+    <a href="#/home">Home</a> - 
+    <a href="#/courses">Courses</a> - 
+    <a href="#/about">About</a>
+    <div class="container" ng-view></ng-view>
+    <script type="text/ng-template" id="home">
+      Hello, and welcome to a basic course search tool.
+    </script>
+    <script type="text/ng-template" id="courses">
+      <h2>Courses</h2>
       Search: <input type="text" data-ng-model="query"/>
       Term: <select ng-model="_filter.terms">
         <option value="">All Terms</option>
@@ -27,19 +42,54 @@
           <li data-ng-repeat="c in courses | filter:query:strict | filter:_filter:strict | orderBy:order">
             <table>
               <tr>
-                <td>{{c.name}} - {{c.title}}</td>
+                <td><b>{{c.name}} - {{c.title}}</b></td>
               </tr>
               <tr>
                 <td>{{c.description}}</td>
               </tr>
               <tr>
-                <td>Terms: <span data-ng-repeat="t in c.terms">{{t}}, </span></td>
+                <td><span data-ng-repeat="t in c.terms | filter:_filter.terms"><a href="#/courses/:id/:term">{{t}}</a> </span></td>
               </tr>
             </table>
           </li>
         </ul>
       </div>
-    </div>
+    </script>
+    <script type="text/ng-template" id="about">
+      <ol>
+        <li>
+          Leverage
+          <ul>
+            <li>Angular.js SPA-framework</li>
+            <li>Embedded views</li>
+            <li>Quick development</li>
+            <li>Client-side filtering</li>
+          </ul>
+        </li>
+        <li>
+          Data Acquisition
+          <ul>
+            <li>
+              JSONP Method: CORS Mitigation
+            </li>
+            <li>
+              Extra Padding: Wrapped in a factory method
+            </li>
+          </ul>
+        </li>
+        <li>
+          Data Representation
+          <ul>
+            <li>
+              JS Entity Classes: Verbose
+            </li>
+          </ul>
+        </li>
+      </ol>
+    </script>
+    <script type="text/ng-template" id="course-detail">
+      
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-route.js"></script>
     <!-- Entity Classes -->
@@ -63,6 +113,21 @@
     <!-- Configuration -->
     <script>
       var afep = angular.module('afep',['ngRoute']);
+      afep.config(['$routeProvider',function($routeProvider){
+        $routeProvider.when('/home',{
+          templateUrl: 'home'
+        });
+        $routeProvider.when('/courses',{
+          templateUrl: 'courses'
+        });
+        $routeProvider.when('/courses/:id/:term',{
+          templateUrl: 'course-detail'
+        });
+        $routeProvider.when('/about',{
+          templateUrl: 'about'
+        });
+        $routeProvider.otherwise({redirectTo:'/home'});
+      }]);
     </script>
     <!-- JSONP Method -->
     <script src="./courses.js"></script>
