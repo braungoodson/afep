@@ -1,4 +1,4 @@
-afep.factory('coursesFactory',function(){
+afep.factory('courseFactory',function(){
   var factory = {};
   var _courses = {
     "3": {

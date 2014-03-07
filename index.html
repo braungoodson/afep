@@ -2,11 +2,29 @@
 <html data-ng-app="afep">
   <body>
     <div id="container">
-      <h1>Courses - By Title</h1>
-      Search: <input type="text" data-ng-model="search.title"/>
-      <div data-ng-controller="afepController">
+      <h1>Courses</h1>
+      Search: <input type="text" data-ng-model="query"/>
+      Term: <select ng-model="_filter.terms">
+        <option value="">All Terms</option>
+        <option value="2011_spring">Spring 2011</option>
+        <option value="2011_fall">Fall 2011</option>
+        <option value="2012_spring">Spring 2012</option>
+        <option value="2012_fall">Fall 2012</option>
+        <option value="2013_spring">Spring 2013</option>
+        <option value="2013_fall">Fall 2013</option>
+        <option value="2014_spring">Spring 2014</option>
+        <option value="2014_fall">Fall 2014</option>
+        <option value="2015_spring">Spring 2015</option>
+        <option value="2015_fall">Fall 2015</option>
+      </select>
+      Order By: <select ng-model="order">
+        <option value="">Default</option>
+        <option value="title">Title</option>
+        <option value="class">Class</option>
+      </select>
+      <div data-ng-controller="CourseController">
         <ul>
-          <li data-ng-repeat="c in courses | filter:search:strict | orderBy:'title'">
+          <li data-ng-repeat="c in courses | filter:query:strict | filter:_filter:strict | orderBy:order">
             <table>
               <tr>
                 <td>{{c.name}} - {{c.title}}</td>
@@ -14,33 +32,43 @@
               <tr>
                 <td>{{c.description}}</td>
               </tr>
+              <tr>
+                <td>Terms: <span data-ng-repeat="t in c.terms">{{t}}, </span></td>
+              </tr>
             </table>
           </li>
         </ul>
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-route.js"></script>
+    <!-- Entity Classes -->
     <script>
-      var afep = angular.module('afep',[]);
       function Term (tid,t) {
         this.tid = tid;
         this.term = t;
       }
       function Course (cid,c) {
         this.cid = cid;
+        this.class = c.course_name;
         this.title = c.course_title;
         this.description = c.course_desc;
         this.name = c.course_name;
         this.terms = [];
         for (t in c.terms) {
-          this.terms.push(new Term(t,c.terms[t]));
+          this.terms.push(t);
         }
       }
     </script>
+    <!-- Configuration -->
+    <script>
+      var afep = angular.module('afep',['ngRoute']);
+    </script>
+    <!-- JSONP Method -->
     <script src="./courses.js"></script>
     <script>
-      afep.controller('afepController',function($scope,coursesFactory){
-        $scope.courses = coursesFactory.getCourses();
+      afep.controller('CourseController',function($scope,courseFactory){
+        $scope.courses = courseFactory.getCourses();
       });
     </script>
   </body>
