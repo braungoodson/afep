@@ -3,10 +3,42 @@
   <head>
     <style>
       body {
-        background-color:#eee;
+        background-color:#a51c30;
+        font-family:verdana;
+        font-size:12px;
       }
-      .container {
-        margin-top:25px;
+      header {
+        background-color:#eee;
+        font-size:30px;
+        font-weight:bold;
+        padding:5px;
+        margin-bottom:15px;
+      }
+      header.smaller {
+        font-size:20px;
+        padding:0px;
+      }
+      nav {
+        background-color:#eee;
+        padding:5px;
+        margin-bottom:15px;
+      }
+      section {
+        background-color:#eee;
+        padding:10px;
+      }
+      ol li {
+        margin-top:5px;
+        margin-bottom:5px;
+      }
+      ul {
+        padding-left:0px;
+      }
+      ul li {
+        background-color:#fff;
+        margin-bottom:5px;
+        list-style:none;
+        padding:5px;
       }
       .meet {
         width:100%;
@@ -24,16 +56,20 @@
     </style>
   <head>
   <body>
-    <h1>Advanced Front-End Problem</h1>
-    <a href="#/home">Home</a> - 
-    <a href="#/courses">Courses</a> - 
-    <a href="#/about">About</a>
-    <div class="container" ng-view></ng-view>
+    <header>
+      Advanced Front-End Problem
+    </header>
+    <nav>
+      <a href="#/home">Home</a> - 
+      <a href="#/courses">Courses</a> - 
+      <a href="#/about">About</a>
+    </nav>
+    <section  ng-view></ng-view>
     <script type="text/ng-template" id="home">
       Hello, and welcome to a basic course search tool.
     </script>
     <script type="text/ng-template" id="courses">
-      <h2>Courses</h2>
+      <header class="smaller">Courses</header>
       Search: <input type="text" data-ng-model="query"/>
       Term: <select ng-model="_filter.terms">
         <option value="">All Terms</option>
@@ -106,8 +142,8 @@
     <script type="text/ng-template" id="course-detail">
       <div ng-controller="CourseController">
         <h3>{{course.title}}</h3>
-        <div class="container">{{course.class}}</div>
-        <div class="container">In {{term}} instructed by {{instructors}}.</span></div>
+        <div>{{course.class}}</div><br>
+        <div>In {{term}} instructed by {{instructors}}.</span></div><br>
         <table class="container meet">
           <tr>
             <td>Building</td>
