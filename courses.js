@@ -1,4 +1,4 @@
-afep.factory('courseFactory',function(){
+afep.factory('coursesFactory',function(){
   var factory = {};
   var _courses = {
     "3": {
@@ -20582,12 +20582,15 @@ afep.factory('courseFactory',function(){
       }
     }
   };
-  var courses = [];
   factory.getCourses = function () {
+    var courses = [];
     for (var c in _courses) {
       courses.push(new Course(c,_courses[c]));
     }
     return courses;
+  }
+  factory.getCourseById = function (cid) {
+    return _courses[cid];
   }
   return factory;
 });

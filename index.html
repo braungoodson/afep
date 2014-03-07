@@ -5,6 +5,10 @@
       .container {
         margin-top:25px;
       }
+      .meet, .meet tr td {
+        border: 1px solid black;
+        padding: 2.5px;
+      }
     </style>
   <head>
   <body>
@@ -37,7 +41,7 @@
         <option value="title">Title</option>
         <option value="class">Class</option>
       </select>
-      <div data-ng-controller="CourseController">
+      <div data-ng-controller="CoursesController">
         <ul>
           <li data-ng-repeat="c in courses | filter:query:strict | filter:_filter:strict | orderBy:order">
             <table>
@@ -48,7 +52,7 @@
                 <td>{{c.description}}</td>
               </tr>
               <tr>
-                <td><span data-ng-repeat="t in c.terms | filter:_filter.terms"><a href="#/courses/:id/:term">{{t}}</a> </span></td>
+                <td><span data-ng-repeat="t in c.terms | filter:_filter.terms"><a href="#/courses/{{c.cid}}/{{t}}">{{t}}</a> </span></td>
               </tr>
             </table>
           </li>
@@ -88,7 +92,25 @@
       </ol>
     </script>
     <script type="text/ng-template" id="course-detail">
-      
+      <div ng-controller="CourseController">
+        <h3>{{course.title}}</h3>
+        <div class="container">{{course.class}}</div>
+        <div class="container">Instructors: {{instructors}} </span></div>
+        <table class="container meet">
+          <tr>
+            <td>Building</td>
+            <td>Room</td>
+            <td>Week Day</td>
+            <td>Time</td>
+          </tr>
+          <tr data-ng-repeat="m in meets">
+            <td>{{m.building}}</td>
+            <td>{{m.room}}</td>
+            <td>{{m.weekDay}}</td>
+            <td>{{m.time}}</td>
+          </tr>
+        </table>
+      </div>
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-route.js"></script>
@@ -97,6 +119,27 @@
       function Term (tid,t) {
         this.tid = tid;
         this.term = t;
+        this.meet_times = [];
+        for (m in t.meet_times) {
+          this.meet_times.push(new MeetTime(tid,t.meet_times[m]));
+        }
+        this.instructors = '';
+        for (i in t.instructors) {
+          this.instructors += t.instructors[i] + ', '; //.push(new Instructor(t.instructors[i]));
+        }
+        if (this.instructors.length > 2) {
+          this.instructors = this.instructors.substr(0,this.instructors.length-2);
+        }
+      }
+      function Instructor (name) {
+        this.name = name;
+      }
+      function MeetTime (tid,m) {
+        this.tid = tid;
+        this.building = m.building || 'N/A';
+        this.room = m.room || 'N/A';
+        this.weekDay = m.weekDay || 'N/A';
+        this.time = m.startTime && m.endTime ? m.startTime + ' - ' + m.endTime : 'N/A';
       }
       function Course (cid,c) {
         this.cid = cid;
@@ -107,6 +150,17 @@
         this.terms = [];
         for (t in c.terms) {
           this.terms.push(t);
+        }
+        this._terms = [];
+        for (t in c.terms) {
+          this._terms.push(new Term(t,c.terms[t]));
+        }
+      }
+      Course.prototype.getTermById = function (tid) {
+        for (t in this._terms) {
+          if (this._terms[t].tid == tid) {
+            return this._terms[t];
+          }
         }
       }
     </script>
@@ -120,7 +174,7 @@
         $routeProvider.when('/courses',{
           templateUrl: 'courses'
         });
-        $routeProvider.when('/courses/:id/:term',{
+        $routeProvider.when('/courses/:cid/:tid',{
           templateUrl: 'course-detail'
         });
         $routeProvider.when('/about',{
@@ -132,8 +186,15 @@
     <!-- JSONP Method -->
     <script src="./courses.js"></script>
     <script>
-      afep.controller('CourseController',function($scope,courseFactory){
-        $scope.courses = courseFactory.getCourses();
+      afep.controller('CoursesController',function($scope,coursesFactory){
+        $scope.courses = coursesFactory.getCourses();
+      });
+      afep.controller('CourseController',function($scope,$routeParams,coursesFactory){
+        var c = coursesFactory.getCourseById($routeParams.cid);
+        $scope.course = new Course($routeParams.cid,c);
+        var t = $scope.course.getTermById($routeParams.tid);
+        $scope.instructors = t.instructors;
+        $scope.meets = t.meet_times;
       });
     </script>
   </body>
