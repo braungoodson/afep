@@ -1,0 +1,38 @@
+{
+  "name": "afep",
+  "version": "0.2.1",
+  "description": "harvard advanced front-end problem",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.7.2",
+    "forever": "^0.11.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "sudo PORT=30001 ./node_modules/forever/bin/forever start app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/braungoodson/afep"
+  },
+  "keywords": [
+    "harvard",
+    "seas",
+    "engineering",
+    "dev",
+    "tools",
+    "data",
+    "visualization",
+    "angular",
+    "twitter",
+    "bootstrap",
+    "jquery"
+  ],
+  "author": "Braun Goodson <braungoodson@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/braungoodson/afep/issues"
+  },
+  "homepage": "https://github.com/braungoodson/afep"
+}
